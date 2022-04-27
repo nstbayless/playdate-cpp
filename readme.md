@@ -1,6 +1,6 @@
 # Playdate-C++
 
-You want to use C++ on the playdate! Great, except you keep getting linker errors about exception handling, and your global variables aren't getting initialized properly, and `__attribute__((constructor))` isn't helping, and...
+You want to use C++ on the playdate! That's basically just C with extra steps right? Great, great, ok, except you keep getting linker errors about exception handling, and your global variables aren't getting initialized properly, and `__attribute__((constructor))` isn't helping, and...
 
 ## The Easy Solution
 
