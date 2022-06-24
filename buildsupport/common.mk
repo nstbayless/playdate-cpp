@@ -44,11 +44,13 @@ HEX  = $(CP) -O ihex
 
 MCU  = cortex-m7
 
+ifneq (, $(PD_USE_ARMCLANG))
 ifneq (, $(shell which armclang))
 $(info using armclang compiler)
 CC = armclang --target=arm-arm-none-eabi -nostdlibinc -nostdlib
 CPP = armclang --target=arm-arm-none-eabi -nostdlibinc -nostdlib
 USE_ARMCLANG=1
+endif
 endif
 
 # List all default C defines here, like -D_DEBUG=1
@@ -101,11 +103,11 @@ MCFLAGS = -mthumb -mcpu=$(MCU) $(FPU)
 ASFLAGS  = $(MCFLAGS) $(OPT) -g -gdwarf-2 -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
 
 CPFLAGS  = $(MCFLAGS) $(OPT) -gdwarf-2 -Wall -Wno-unused -Wstrict-prototypes -Wno-unknown-pragmas -fverbose-asm -Wdouble-promotion
-CPFLAGS += -ffunction-sections -fdata-sections -Wa,-ahlms=$(OBJDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
+CPFLAGS += -ffunction-sections -fdata-sections $(DEFS)
 
 LDFLAGS  = $(MCFLAGS) -T$(LDSCRIPT) -Wl,-Map=$(OBJDIR)/pdex.map,--cref,--gc-sections,--no-warn-mismatch $(LIBDIR)
 
-ifneq(,$(USE_ARMCLANG))
+ifneq (,$(USE_ARMCLANG))
 # armclang options
 CPFLAGS += -I/opt/arm/developmentstudio-2021.2/sw/ARMCompiler6.17/include/
 endif
@@ -171,7 +173,7 @@ $(OBJDIR)/pdex.bin: $(OBJDIR)/pdex.elf
 	$(BIN) $< $@
 
 $(OBJDIR)/pdex.${DYLIB_EXT}: OBJDIR
-	$(SIMCOMPILER) $(DYLIB_FLAGS) -lm -DTARGET_SIMULATOR=1 -DTARGET_EXTENSION=1 $(INCDIR) -o $(OBJDIR)/pdex.${DYLIB_EXT} $(SRC)
+	$(SIMCOMPILER) $(DYLIB_FLAGS) -lm -DTARGET_SIMULATOR=1 -DTARGET_EXTENSION=1 $(INCDIR) -o $(OBJDIR)/pdex.${DYLIB_EXT} $(SRC) $(CLANGFLAGS)
 
 clean:
 	-rm -rf $(OBJDIR)
