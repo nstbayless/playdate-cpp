@@ -34,13 +34,15 @@ PDC = $(SDK)/bin/pdc
 
 VPATH += $(SDK)/C_API/buildsupport
 
-CC   = $(GCC)$(TRGT)gcc -g -Wstrict-prototypes
+CC   = $(GCC)$(TRGT)gcc -g
 CPP  = $(GCC)$(TRGT)g++ -g
-LL  := $(GCC)$(TRGT)g++ -g
+LL   = $(GCC)$(TRGT)g++ -g
 CP   = $(GCC)$(TRGT)objcopy
 AS   = $(GCC)$(TRGT)gcc -x assembler-with-cpp
 BIN  = $(CP) -O binary
 HEX  = $(CP) -O ihex
+
+MCU  = cortex-m7
 
 ifneq (, $(shell which armclang))
 $(info using armclang compiler)
@@ -48,8 +50,6 @@ CC = armclang --target=arm-arm-none-eabi -nostdlibinc -nostdlib
 CPP = armclang --target=arm-arm-none-eabi -nostdlibinc -nostdlib
 USE_ARMCLANG=1
 endif
-
-MCU  = cortex-m7
 
 # List all default C defines here, like -D_DEBUG=1
 DDEFS = -DTARGET_PLAYDATE=1 -DTARGET_EXTENSION=1
@@ -90,7 +90,7 @@ ADEFS   = $(DADEFS) $(UADEFS) -D__HEAP_SIZE=$(HEAP_SIZE) -D__STACK_SIZE=$(STACK_
 SRC += $(SDK)/C_API/buildsupport/setup.c
 
 # Original object list
-_OBJS	= $(patsubst %.cpp,%.cpp.o,$(patsubst %.c,%.o,$(SRC)))
+_OBJS  = $(patsubst %.cpp,%.cpp.o,$(patsubst %.c,%.o,$(SRC)))
 
 # oject list in build folder
 OBJS    = $(addprefix $(OBJDIR)/, $(_OBJS))
@@ -100,17 +100,15 @@ MCFLAGS = -mthumb -mcpu=$(MCU) $(FPU)
 
 ASFLAGS  = $(MCFLAGS) $(OPT) -g -gdwarf-2 -Wa,-amhls=$(<:.s=.lst) $(ADEFS)
 
-CPFLAGS  = $(MCFLAGS) $(OPT) -gdwarf-2 -Wall -Wno-unused -Wno-unknown-pragmas -fverbose-asm -Wdouble-promotion
-CPFLAGS += -ffunction-sections -fdata-sections $(DEFS)
+CPFLAGS  = $(MCFLAGS) $(OPT) -gdwarf-2 -Wall -Wno-unused -Wstrict-prototypes -Wno-unknown-pragmas -fverbose-asm -Wdouble-promotion
+CPFLAGS += -ffunction-sections -fdata-sections -Wa,-ahlms=$(OBJDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
 
-CLANGFLAGS += -Wa,-ahlms=$(OBJDIR)/$(notdir $(<:.c=.lst))
+LDFLAGS  = $(MCFLAGS) -T$(LDSCRIPT) -Wl,-Map=$(OBJDIR)/pdex.map,--cref,--gc-sections,--no-warn-mismatch $(LIBDIR)
 
-ifneq (,$(USE_ARMCLANG))
+ifneq(,$(USE_ARMCLANG))
 # armclang options
 CPFLAGS += -I/opt/arm/developmentstudio-2021.2/sw/ARMCompiler6.17/include/
 endif
-
-LDFLAGS  = $(MCFLAGS) -T$(LDSCRIPT) -Wl,-Map=$(OBJDIR)/pdex.map,--cref,--gc-sections,--no-warn-mismatch $(LIBDIR)
 
 # Generate dependency information
 CPFLAGS += -MD -MP -MF $(DEPDIR)/$(@F).d
@@ -158,7 +156,6 @@ $(OBJDIR)/%.o : %.c | OBJDIR DEPDIR
 	$(CC) -c $(CPFLAGS) -I . $(INCDIR) $< -o $@
 
 $(OBJDIR)/%.o : %.s | OBJDIR DEPDIR
-	mkdir -p `dirname $@`
 	$(AS) -c $(ASFLAGS) $< -o $@
 
 .PRECIOUS: $(OBJDIR)/%elf
@@ -174,7 +171,7 @@ $(OBJDIR)/pdex.bin: $(OBJDIR)/pdex.elf
 	$(BIN) $< $@
 
 $(OBJDIR)/pdex.${DYLIB_EXT}: OBJDIR
-	$(SIMCOMPILER) $(DYLIB_FLAGS) -g -lm -DTARGET_SIMULATOR=1 -DTARGET_EXTENSION=1 $(INCDIR) -o $(OBJDIR)/pdex.${DYLIB_EXT} $(SRC) $(CLANGFLAGS)
+	$(SIMCOMPILER) $(DYLIB_FLAGS) -lm -DTARGET_SIMULATOR=1 -DTARGET_EXTENSION=1 $(INCDIR) -o $(OBJDIR)/pdex.${DYLIB_EXT} $(SRC)
 
 clean:
 	-rm -rf $(OBJDIR)
