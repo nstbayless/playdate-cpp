@@ -15,10 +15,7 @@ static PlaydateAPI* pd;
 static int _is_init = 0;
 
 __attribute__((constructor))
-static void _init(void)
-{
-	_is_init = 1;
-}
+static void _init(void) { _is_init = 1; }
 
 int eventHandler_pdnewlib(PlaydateAPI* _pd, PDSystemEvent event, uint32_t arg)
 {
@@ -33,27 +30,10 @@ int eventHandler_pdnewlib(PlaydateAPI* _pd, PDSystemEvent event, uint32_t arg)
 	return 0;
 }
 
-void _exit(int code)
-{
-	while (1)
-	{
-		pd->system->error("exited with code %d.", code);
-	}
-}
-
-void __exit(int code)
-{
-	_exit(code);
-}
-
-int _kill(int pid, int sig)
-{
-	return 0;
-}
-int _getpid(void)
-{
-	return 1;
-}
+void _exit(int code) { while (1) { pd->system->error("exited with code %d.", code); } }
+void __exit(int code) { _exit(code); }
+int _kill(int pid, int sig) { return 0; }
+int _getpid(void) { return 1; }
 
 #define HANDLE_STDIN 0
 #define HANDLE_STDOUT 1
@@ -228,13 +208,6 @@ int _unlink(char* p)
 	return 0;
 }
 
-/*
-int _link(char* old, char* new) {
-	// TODO
-	errno = EMLINK;
-	return -1;
-}
-*/
 
 int _isatty(int file)
 {

@@ -1,3 +1,6 @@
+//
+// Created by Matt on 8/27/2023.
+//
 
 #include "pd_api.h"
 
@@ -31,14 +34,14 @@ int eventHandlerShim(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg)
 		exec_array(&__preinit_array_start, &__preinit_array_end);
 		exec_array(&__init_array_start, &__init_array_end);
 	}
-	
+
 	if (event == kEventTerminate)
 	{
 		int result = eventHandler(playdate, event, arg);
 		exec_array(&__fini_array_start, &__fini_array_end);
 		return result;
 	}
-	
+
 	return eventHandler(playdate, event, arg);
 }
 
@@ -59,14 +62,28 @@ uint32_t* _bss_end __attribute__((section(".bss_end"))) = &bssEnd;
 
 int eventHandlerShim(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg)
 {
-	if ( event == kEventInit )
-		pdrealloc = playdate->system->realloc;
-	
-	return eventHandler(playdate, event, arg);
+    if ( event == kEventInit )
+        pdrealloc = playdate->system->realloc;
+
+    return eventHandler(playdate, event, arg);
 }
 
+#ifdef _WINDLL
+__declspec(dllexport)
+#endif
 void* malloc(size_t nbytes) { return pdrealloc(NULL,nbytes); }
+
+#ifdef _WINDLL
+__declspec(dllexport)
+#endif
 void* realloc(void* ptr, size_t nbytes) { return pdrealloc(ptr,nbytes); }
-void  free(void* ptr ) { pdrealloc(ptr,0); }
+
+#ifdef _WINDLL
+__declspec(dllexport)
+#endif
+void  free(void* ptr )
+{
+    pdrealloc(ptr,0);
+}
 
 #endif
