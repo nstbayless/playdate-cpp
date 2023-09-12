@@ -14,8 +14,6 @@
 
 constexpr int TEXT_WIDTH = 86;
 constexpr int TEXT_HEIGHT = 16;
-constexpr int LCD_COLUMNS = 400;
-constexpr int LCD_ROWS = 240;
 
 /**
  * This Class contains the entire logic of the "game"
