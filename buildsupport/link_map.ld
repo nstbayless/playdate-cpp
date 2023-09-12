@@ -1,23 +1,12 @@
-
-MEMORY
-{
-  EXTRAM (rwx): ORIGIN = 0x60000000, LENGTH = 8*1024K
-}
-
+ENTRY(eventHandlerShim)
 GROUP(libgcc.a libc.a libm.a)
 
 SECTIONS
 {
-	.capi :
-	{
-		KEEP(*(.capi_handler))
-		KEEP(*(.bss_start))
-		KEEP(*(.bss_end))
-	} > EXTRAM
-
 	.text :
 	{
 		*(.text)
+		*(.text.*)
 
 		KEEP(*(.init))
 		KEEP(*(.fini))
@@ -40,17 +29,7 @@ SECTIONS
 
 		KEEP(*(.eh_frame*))
 
-	} > EXTRAM
-	
-	.ARM.extab : {
-        *(.ARM.extab* *extab.*)
-   	} > EXTRAM
-
-   .ARM.exidx : {
-        PROVIDE (__exidx_start = .);
-        *(.ARM.exidx* *exidx.*)
-        PROVIDE (__exidx_end = .);
-   	} > EXTRAM
+	}
 
 	.data :
 	{
@@ -59,6 +38,11 @@ SECTIONS
 		__data_start__ = .;
 		*(vtable)
 		*(.data*)
+
+		. = ALIGN(4);
+        PROVIDE (__exidx_start = .);
+        *(.ARM.exidx* *exidx.*)
+        PROVIDE (__exidx_end = .);
 
 		. = ALIGN(4);
 		/* preinit data */
@@ -84,7 +68,7 @@ SECTIONS
 		/* All data end */
 		__data_end__ = .;
 
-	} > EXTRAM
+	}
 
 	.bss :
 	{
@@ -92,10 +76,11 @@ SECTIONS
 		__bss_start__ = .;
 		*(.bss*)
 		*(COMMON)
+		*(COM)
 		. = ALIGN(4);
 		__bss_end__ = .;
 
-	} > EXTRAM
+	}
 
   /DISCARD/ :
   {
