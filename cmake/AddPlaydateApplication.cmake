@@ -75,4 +75,8 @@ function(add_playdate_application PLAYDATE_GAME_NAME)
             COMMAND ${PDC} ${CMAKE_CURRENT_SOURCE_DIR}/Source
             ${CMAKE_CURRENT_SOURCE_DIR}/${PLAYDATE_GAME_NAME}.pdx)
     endif()
+
+
+    target_compile_options(${PLAYDATE_GAME_NAME} PUBLIC $<$<CONFIG:DEBUG>:-O0>)
+    target_compile_options(${PLAYDATE_GAME_NAME} PUBLIC $<$<CONFIG:RELEASE>:-O3>)
 endfunction()
