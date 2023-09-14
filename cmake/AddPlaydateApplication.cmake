@@ -8,6 +8,13 @@ function(add_playdate_application PLAYDATE_GAME_NAME)
 
         add_custom_command(
             TARGET ${PLAYDATE_GAME_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_CURRENT_BINARY_DIR}/${BUILD_SUB_DIR}${PLAYDATE_GAME_NAME}.elf
+            ${CMAKE_CURRENT_SOURCE_DIR}/Source/pdex.elf
+        )
+
+        add_custom_command(
+            TARGET ${PLAYDATE_GAME_NAME} POST_BUILD
             COMMAND ${CMAKE_STRIP} --strip-unneeded -R .comment -g
             ${PLAYDATE_GAME_NAME}.elf
             -o ${CMAKE_CURRENT_SOURCE_DIR}/Source/pdex.elf
@@ -39,7 +46,7 @@ function(add_playdate_application PLAYDATE_GAME_NAME)
             add_custom_command(
                     TARGET ${PLAYDATE_GAME_NAME} POST_BUILD
                     COMMAND ${CMAKE_COMMAND} -E copy
-                    ${CMAKE_CURRENT_BINARY_DIR}/${BUILD_SUB_DIR}${PLAYDATE_GAME_NAME}.dll
+                    ${CMAKE_CURRENT_BINARY_DIR}/${BUILD_SUB_DIR{BUILD_SUB_DIR}${PLAYDATE_GAME_NAME}.dll
                     ${CMAKE_CURRENT_SOURCE_DIR}/Source/pdex.dll)
 
         elseif(APPLE)
