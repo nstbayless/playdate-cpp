@@ -12,8 +12,10 @@ initialized properly, and `__attribute__((constructor))` isn't helping, and...
    `arm-none-eabi` compiler referenced by prerequisites section from
    ["Inside Playdate With C"](https://sdk.play.date/2.0.3/Inside%20Playdate%20with%20C.html)
    supports this.)
-3. The Playdate SDK installed (and preferably added to the `PATH`)
-4. The forward declaration of `eventHandler` in `pd_api.h` needs to be deleted 
+3. For the Playdate hardware, you need to have the ARM toolchain of version
+   12.3.rel1 or later. If you don't you may encounter linker errors.
+4. The Playdate SDK installed (and preferably added to the `PATH`)
+5. The forward declaration of `eventHandler` in `pd_api.h` needs to be deleted 
    or commented out. At time of writing, this is lines 58-61, there is also a
    comment indicating that is the main entry point function. This will not 
    impact pure C builds, including the builds of all the Playdate examples. Not
