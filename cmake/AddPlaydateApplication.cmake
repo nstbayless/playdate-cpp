@@ -48,7 +48,12 @@ function(add_playdate_application PLAYDATE_GAME_NAME)
                     COMMAND ${CMAKE_COMMAND} -E copy
                     ${CMAKE_CURRENT_BINARY_DIR}/${BUILD_SUB_DIR}${PLAYDATE_GAME_NAME}.dll
                     ${CMAKE_CURRENT_SOURCE_DIR}/Source/pdex.dll)
-
+        elseif (MINGW)
+            add_custom_command(
+                    TARGET ${PLAYDATE_GAME_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy
+                    ${CMAKE_CURRENT_BINARY_DIR}/lib${PLAYDATE_GAME_NAME}.dll
+                    ${CMAKE_CURRENT_SOURCE_DIR}/Source/pdex.dll)
         elseif(APPLE)
             if(${CMAKE_GENERATOR} MATCHES "Xcode" )
                 set(BUILD_SUB_DIR $<CONFIG>/)
