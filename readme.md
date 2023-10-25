@@ -57,6 +57,41 @@ Same as the toolchain file, this is achieved with an option passed to CMake:
 -DPDCPP_BUILD_EXAMPLES=ON
 ```
 
+## Building other libraries for the playdate
+Ok, so now you can write your project in C++, so you want to link in that one
+library that makes your life super easy. Everything works in the simulator, you
+build for the hardware, boot it up and... Everything crashes; no error logs.
+
+You can try this:
+```
+...
+modify_target_for_playdate(the_library_that_does_the_thing_you_need)
+...
+target_link_libraries(my_project pdcpp the_library_that_does_the_thing_you_need)
+```
+
+The CMake function `modify_target_for_playdate` sets a handful of attributes on
+any CMake target in the project that are required for operation on the Playdate.
+
+This function works for libraries which:
+* are compiled from source by your project
+* don't link in other libraries that haven't been modified for playdate.
+* are reasonably platform-agnostic
+* either don't throw exceptions, or provide options for disabling exceptions.
+  (we're working on the exceptions thing, and would really rather support them.)
+
+### Caveat Emptor
+The `modify_target_for_playdate` function alone may not be enough.
+
+If the library expects a certain type of hardware, or does anything that expects
+there to be a traditional operating system backing it up (threads, file systems,
+networking, etc.) nothing about this build-system trickery will save it.
+
+The best advice here is to test with the Playdate hardware early and often.
+The simulator can't sandbox the OS, so you will not see certain classes of
+errors until trying to run on the hardware. You will be far happier if you catch
+those failures without writing a bunch of code that won't work on the target.
+
 ## This doesn't work for me
 The base principles of this are explained on this [forum thread](https://devforum.play.date/t/cpp-guide-c-on-playdate/5085). 
 Good luck.
