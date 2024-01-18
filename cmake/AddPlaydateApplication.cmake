@@ -94,7 +94,5 @@ function(add_playdate_application PLAYDATE_GAME_NAME)
             ${PDCPP_STAGING_DIR}/${PLAYDATE_GAME_NAME}.pdx)
     endif()
 
-
-    target_compile_options(${PLAYDATE_GAME_NAME} PUBLIC $<$<CONFIG:DEBUG>:-O0>)
-    target_compile_options(${PLAYDATE_GAME_NAME} PUBLIC $<$<CONFIG:RELEASE>:-O3>)
+    target_link_libraries(${PLAYDATE_GAME_NAME} PUBLIC pdcpp_core)
 endfunction()
