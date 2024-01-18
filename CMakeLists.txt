@@ -1,5 +1,7 @@
 project("PlaydateCPP")
 
+option(PDCPP_STAGE_IN_BINARY_DIR "Use CMake binary dir (instead of source dir) to stage files" OFF)
+
 set(ENVSDK $ENV{PLAYDATE_SDK_PATH})
 file(TO_CMAKE_PATH ${ENVSDK} SDK)
 set(SDK ${SDK} PARENT_SCOPE)
