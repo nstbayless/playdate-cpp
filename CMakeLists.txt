@@ -2,6 +2,7 @@ project("PlaydateCPP")
 
 set(ENVSDK $ENV{PLAYDATE_SDK_PATH})
 file(TO_CMAKE_PATH ${ENVSDK} SDK)
+set(SDK ${SDK} PARENT_SCOPE)
 message(STATUS "Playdate SDK Path: " ${SDK})
 set(PDC "${SDK}/bin/pdc" -sdkpath "${SDK}" CACHE FILEPATH "path to the Playdate Compiler")
 
