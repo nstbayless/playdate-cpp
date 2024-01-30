@@ -1,7 +1,10 @@
 project("PlaydateCPP")
 
+option(PDCPP_STAGE_IN_BINARY_DIR "Use CMake binary dir (instead of source dir) to stage files" OFF)
+
 set(ENVSDK $ENV{PLAYDATE_SDK_PATH})
 file(TO_CMAKE_PATH ${ENVSDK} SDK)
+set(SDK ${SDK} PARENT_SCOPE)
 message(STATUS "Playdate SDK Path: " ${SDK})
 set(PDC "${SDK}/bin/pdc" -sdkpath "${SDK}" CACHE FILEPATH "path to the Playdate Compiler")
 
@@ -28,7 +31,8 @@ if (TOOLCHAIN STREQUAL "armgcc")
 
     target_compile_definitions(playdate_sdk PUBLIC TARGET_PLAYDATE=1)
     target_compile_options(playdate_sdk PUBLIC -Wall -Wno-unknown-pragmas -Wdouble-promotion)
-    target_compile_options(playdate_sdk PUBLIC $<$<CONFIG:DEBUG>:-O2>)
+    target_compile_options(playdate_sdk PRIVATE $<$<CONFIG:DEBUG>:-O2>)
+    target_compile_options(playdate_sdk INTERFACE $<$<CONFIG:DEBUG>:-O0>)
     target_compile_options(playdate_sdk PUBLIC $<$<CONFIG:RELEASE>:-O3>)
 
     target_compile_options(playdate_sdk PUBLIC ${MCFLAGS})

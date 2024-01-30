@@ -11,7 +11,6 @@
 #include <vector>
 #include <memory>
 
-#include <pd_api.h>
 #include <pdcpp/pdnewlib.h>
 
 // First, give the library that will be included a name

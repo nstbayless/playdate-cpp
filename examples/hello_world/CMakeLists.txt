@@ -16,8 +16,5 @@ set(CMAKE_XCODE_GENERATE_SCHEME TRUE)
 # Now we can declare our application
 add_playdate_application(HelloWorld)
 
-# Add its sources
+# Add its sources, and you're good to go!
 target_sources(HelloWorld PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
-
-# Link against the pdcpp_core library, and you're good to go!
-target_link_libraries(HelloWorld pdcpp_core)
